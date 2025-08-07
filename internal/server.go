@@ -11,21 +11,16 @@ import (
 )
 
 func InitServer() *gin.Engine {
-	// Initialize external services
 	services.InitFirebase()
 	services.InitSupabase()
 
-	// Create a Gin router with default middleware (logger and recovery)
 	router := gin.Default()
 
-	// Setup CORS middleware
 	router.Use(middleware.CORSMiddleware())
 
-	// Public routes
 	router.POST("/api/auth/signup", handlers.Signup)
 	router.POST("/api/auth/login", handlers.Login)
 
-	// Protected routes
 	protected := router.Group("/api/protected")
 	protected.Use(middleware.AuthMiddleware())
 	{

@@ -8,13 +8,11 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 )
 
-// MyClaims custom JWT claims
 type MyClaims struct {
 	UserID string `json:"user_id"`
 	jwt.StandardClaims
 }
 
-// GenerateJWT creates a new JWT
 func GenerateJWT(userID string) (string, error) {
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {

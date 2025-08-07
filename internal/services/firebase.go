@@ -12,7 +12,6 @@ import (
 
 var firebaseApp *firebase.App
 
-// InitFirebase initializes the Firebase Admin SDK
 func InitFirebase() {
 	serviceAccountFile := os.Getenv("FIREBASE_SERVICE_ACCOUNT_PATH")
 	if serviceAccountFile == "" {
@@ -29,8 +28,7 @@ func InitFirebase() {
 	log.Println("Firebase Admin SDK initialized successfully.")
 }
 
-// VerifyFirebaseToken verifies the token received from the client
-func VerifyFirebaseToken(ctx context.Context, idToken string) (*auth.Token, error) { // Note the change here
+func VerifyFirebaseToken(ctx context.Context, idToken string) (*auth.Token, error) { 
 	client, err := firebaseApp.Auth(ctx)
 	if err != nil {
 		return nil, err

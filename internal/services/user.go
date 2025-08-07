@@ -8,7 +8,6 @@ import (
 	"sw-components-jobgenie-restapi/internal/models"
 )
 
-// CreateUser inserts a new user into the database
 func CreateUser(ctx context.Context, user models.User) error {
 	query := `INSERT INTO users (firebase_uid, email, full_name) VALUES ($1, $2, $3) ON CONFLICT (firebase_uid) DO NOTHING;`
 	_, err := db.ExecContext(ctx, query, user.FirebaseUID, user.Email, user.FullName)
@@ -18,7 +17,6 @@ func CreateUser(ctx context.Context, user models.User) error {
 	return err
 }
 
-// UserExists checks if a user with the given Firebase UID already exists
 func UserExists(ctx context.Context, firebaseUID string) (bool, error) {
 	var count int
 	query := `SELECT COUNT(*) FROM users WHERE firebase_uid = $1`

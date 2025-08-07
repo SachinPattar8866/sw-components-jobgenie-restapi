@@ -14,7 +14,6 @@ type AuthRequest struct {
 	IDToken string `json:"idToken"`
 }
 
-// ✅ Login handler (only allows existing users)
 func Login(c *gin.Context) {
 	var req AuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -50,7 +49,6 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }
 
-// ✅ Signup handler (creates user if not exists)
 func Signup(c *gin.Context) {
 	var req AuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

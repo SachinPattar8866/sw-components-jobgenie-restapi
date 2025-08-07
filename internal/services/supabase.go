@@ -9,7 +9,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// db is a package-level variable for the database connection pool
 var db *sql.DB
 
 func init() {
@@ -18,7 +17,6 @@ func init() {
 	}
 }
 
-// InitSupabase initializes the database connection
 func InitSupabase() {
 	var err error
 	connStr := os.Getenv("SUPABASE_CONN_STRING")

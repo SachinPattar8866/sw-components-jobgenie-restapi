@@ -10,7 +10,6 @@ import (
 	"sw-components-jobgenie-restapi/internal/utils"
 )
 
-// AuthMiddleware validates the JWT from the cookie
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		jwtSecret := os.Getenv("JWT_SECRET")
@@ -35,7 +34,6 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(*utils.MyClaims); ok && token.Valid {
-			// Set the user ID in the context for handlers to use
 			c.Set("user_id", claims.UserID)
 			c.Next()
 		} else {
