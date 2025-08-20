@@ -18,7 +18,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		tokenString, err := c.Cookie("jwt")
+		tokenString, err := c.Cookie("token")
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "No JWT token found in cookie"})
 			return
