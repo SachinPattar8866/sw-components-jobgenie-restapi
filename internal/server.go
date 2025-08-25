@@ -5,28 +5,27 @@ import (
 
 	"sw-components-jobgenie-restapi/internal/handlers"
 	"sw-components-jobgenie-restapi/internal/middleware"
-	"sw-components-jobgenie-restapi/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
 
-func InitServer() *gin.Engine {
-	services.InitFirebase()
-	services.InitSupabase()
-
+// Dependencies are injected from main.
+func InitServer(userHandler *handlers.UserHandler, resumeHandler *handlers.ResumeHandler) *gin.Engine {
 	router := gin.Default()
-
 	router.Use(middleware.CORSMiddleware())
 
-	router.POST("/api/auth/signup", handlers.Signup)
-	router.POST("/api/auth/login", handlers.Login)
+	// Auth endpoints
+	router.POST("/api/auth/signup", userHandler.Signup)
+	router.POST("/api/auth/login", userHandler.Login)
 
+	// Protected
 	protected := router.Group("/api/protected")
 	protected.Use(middleware.AuthMiddleware())
 	{
 		protected.GET("/dashboard", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "Welcome to the dashboard!"})
 		})
+		protected.POST("/resume/upload", resumeHandler.UploadResume)
 	}
 
 	return router

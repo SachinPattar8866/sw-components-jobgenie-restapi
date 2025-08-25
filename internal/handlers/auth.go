@@ -7,14 +7,26 @@ import (
 	"sw-components-jobgenie-restapi/internal/models"
 	"sw-components-jobgenie-restapi/internal/services"
 	"sw-components-jobgenie-restapi/internal/utils"
+
 	"github.com/gin-gonic/gin"
 )
+
+type UserHandler struct {
+	UserService *services.UserService
+}
+
+func NewUserHandler(us *services.UserService) *UserHandler {
+	return &UserHandler{
+		UserService: us,
+	}
+}
 
 type AuthRequest struct {
 	IDToken string `json:"idToken"`
 }
 
-func Login(c *gin.Context) {
+// Login handles user login by verifying the Firebase token.
+func (h *UserHandler) Login(c *gin.Context) {
 	var req AuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
@@ -28,7 +40,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	userExists, err := services.UserExists(ctx, token.UID)
+	userExists, err := h.UserService.UserExists(ctx, token.UID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking user existence"})
 		return
@@ -46,10 +58,11 @@ func Login(c *gin.Context) {
 	}
 
 	c.SetCookie("token", jwtToken, 3600*24, "/", "localhost", false, true)
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": jwtToken})
 }
 
-func Signup(c *gin.Context) {
+// Signup handles user registration.
+func (h *UserHandler) Signup(c *gin.Context) {
 	var req AuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
@@ -63,7 +76,7 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	userExists, err := services.UserExists(ctx, token.UID)
+	userExists, err := h.UserService.UserExists(ctx, token.UID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking user existence"})
 		return
@@ -92,7 +105,7 @@ func Signup(c *gin.Context) {
 		FullName:    userRecord.DisplayName,
 	}
 
-	if err := services.CreateUser(ctx, newUser); err != nil {
+	if err := h.UserService.CreateUser(ctx, newUser); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
